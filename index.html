@@ -128,13 +128,48 @@
     <script>
         function gymApp() {
             const programData = [ /* tüm program aynı, önceki mesajdaki gibi */ 
-                {gun:"Pazartesi",baslik:"Üst Vücut (İtme/Çekme)",hareketler:[{ad:"Chest Press Machine",set:"3 Set x 10-12 Tekrar (Oturarak, kolları ileri it)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Chest-Press-Machine.gif"},{ad:"Lat Pulldown",set:"3 Set x 10-15 Tekrar (Geniş tutuş, göğüse çek)",set_sayisi:3,gif_url:"https://sporium.net/wp-content/uploads/2020/01/pulldown-min.gif"},{ad:"Dumbbell Shoulder Press",set:"3 Set x 12 Tekrar (Omuzdan baş üstüne itiş)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2023/09/Standing-Dumbbell-Overhead-Press.gif"},{ad:"Seated Cable Row",set:"3 Set x 12-15 Tekrar (Yere yakın, karna çekiş)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Cable-Row.gif"},{ad:"Dumbbell Bicep Curl",set:"3 Set x 12-15 Tekrar (Ayakta, dambıl kaldırma)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Curl.gif"},{ad:"Triceps Pushdown",set:"3 Set x 12-15 Tekrar (Kabloyu arka kol ile it)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Pushdown.gif"},{ad:"Spor Sonrası Kardiyo",set:"Eliptik/Yatay Bisiklet: 15-20 dk.",set_sayisi:1,gif_url:"https://liftmanual.com/wp-content/uploads/2023/04/cycle-cross-trainer.gif"}]},
-                {gun:"Salı",baslik:"Alt Vücut & Karın (Aktif Toparlanma)",hareketler:[{ad:"Leg Press",set:"3 Set x 10-12 Tekrar",set_sayisi:3,gif_url:"https://media.tenor.com/e0qeS17dv7QAAAAM/legpress45-leg-press.gif"},{ad:"Leg Extension",set:"3 Set x 15 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/LEG-EXTENSION.gif"},{ad:"Lying Leg Curl",set:"3 Set x 12 Tekrar",set_sayisi:3,gif_url:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjHK1HxRH5eV1_5SJ4irnZjc7kbnf2SZTNzw&s"},{ad:"Gobblet Squat",set:"3 Set x 12 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Goblet-Squat.gif"},{ad:"Plank",set:"3 Set x (Maksimum Süre / Hedef 45-60 sn)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Plank.gif"},{ad:"Spor Sonrası Kardiyo",set:"Eliptik/Yatay Bisiklet: 15-20 dk.",set_sayisi:1,gif_url:""}]},
+                {gun:"Pazartesi",baslik:"Üst Vücut (İtme/Çekme)",hareketler:[{ad:"Chest Press Machine",set:"3 Set x 10-12 Tekrar (Oturarak, kolları ileri it)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Chest-Press-Machine.gif"},
+                {ad:"Lat Pulldown",set:"3 Set x 10-15 Tekrar (Geniş tutuş, göğüse çek)",set_sayisi:3,gif_url:"https://sporium.net/wp-content/uploads/2020/01/pulldown-min.gif"},
+                {ad:"Dumbbell Shoulder Press",set:"3 Set x 12 Tekrar (Omuzdan baş üstüne itiş)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2023/09/Standing-Dumbbell-Overhead-Press.gif"},
+                {ad:"Seated Cable Row",set:"3 Set x 12-15 Tekrar (Yere yakın, karna çekiş)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Cable-Row.gif"},
+                {ad:"Dumbbell Bicep Curl",set:"3 Set x 12-15 Tekrar (Ayakta, dambıl kaldırma)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Curl.gif"},
+                {ad:"Triceps Pushdown",set:"3 Set x 12-15 Tekrar (Kabloyu arka kol ile it)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Pushdown.gif"},
+                {ad:"Spor Sonrası Kardiyo",set:"Eliptik/Yatay Bisiklet: 15-20 dk.",set_sayisi:1,gif_url:"https://liftmanual.com/wp-content/uploads/2023/04/cycle-cross-trainer.gif"}]},
+                    {gun:"Salı",baslik:"Alt Vücut & Karın (Aktif Toparlanma)",hareketler:[{ad:"Leg Press",set:"3 Set x 10-12 Tekrar",set_sayisi:3,gif_url:"https://media.tenor.com/e0qeS17dv7QAAAAM/legpress45-leg-press.gif"},
+                    {ad:"Leg Extension",set:"3 Set x 15 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/LEG-EXTENSION.gif"},
+                    {ad:"Lying Leg Curl",set:"3 Set x 12 Tekrar",set_sayisi:3,gif_url:
+                    "https://burnfit.io/wp-content/uploads/2023/11/LEG_CURL.gif"},
+                    {ad:"Gobblet Squat",set:"3 Set x 12 Tekrar",set_sayisi:3,gif_url:
+                    "https://www.inspireusafoundation.org/file/2023/08/kettlebell-goblet-squat-muscles.gif"},
+                    {ad:"Plank",set:"3 Set x (Maksimum Süre / Hedef 45-60 sn)",set_sayisi:3,gif_url:
+                    "https://burnfit.io/wp-content/uploads/2023/11/PLANK.gif"},
+                    {ad:"Spor Sonrası Kardiyo",set:"Eliptik/Yatay Bisiklet: 15-20 dk.",set_sayisi:1,gif_url:
+                    "https://burnfit.io/wp-content/uploads/2023/11/ELLIP_MC.gif"}]},
                 {gun:"Çarşamba",baslik:"Dinlenme",not:"Tam Dinlenme veya Hafif Yürüyüş"},
-                {gun:"Perşembe",baslik:"Üst Vücut (Farklı Açılar)",hareketler:[{ad:"Incline Dumbbell Press",set:"3 Set x 10-12 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Bench-Press.gif"},{ad:"Assisted Pull-up Machine",set:"3 Set x 10 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Assisted-Pull-Up.gif"},{ad:"Lateral Raise",set:"4 Set x 15 Tekrar (Hafif ağırlık)",set_sayisi:4,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif"},{ad:"Butterfly / Pec Deck",set:"3 Set x 15 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Pec-Deck-Fly.gif"},{ad:"Hammer Curl",set:"3 Set x 12 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Hammer-Curl.gif"},{ad:"Spor Sonrası Kardiyo",set:"Eliptik/Yatay Bisiklet: 15-20 dk.",set_sayisi:1,gif_url:""}]},
-                {gun:"Cuma",baslik:"Alt Vücut & Karın (Tekrar & Denge)",hareketler:[{ad:"Lunges",set:"3 Set x 10 Adım (Her bacak)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lunge.gif"},{ad:"Calf Raise",set:"4 Set x 20 Tekrar",set_sayisi:4,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Standing-Dumbbell-Calf-Raise.gif"},{ad:"Leg Press (Geniş Ayak)",set:"3 Set x 12 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Press.gif"},{ad:"Crunch Machine / Mekik",set:"4 Set x 20 Tekrar",set_sayisi:4,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Crunches-on-Machine.gif"},{ad:"Spor Sonrası Kardiyo",set:"Eliptik/Yatay Bisiklet: 15-20 dk.",set_sayisi:1,gif_url:""}]},
-                {gun:"Cumartesi",baslik:"Aktif Kardiyo (Toparlanma)",not:"Açık hava yürüyüş, yüzme veya bisiklet 45-60 dk."},
-                {gun:"Pazar",baslik:"Tam Dinlenme",not:"Kas Büyüme Günü – Kafein/Kardiyo Yok"}
+                    {gun:"Perşembe",baslik:"Üst Vücut (Farklı Açılar)",hareketler:[{ad:"Incline Dumbbell Press",set:"3 Set x 10-12 Tekrar",set_sayisi:3,gif_url:
+                    "https://burnfit.io/wp-content/uploads/2023/11/DB_INC_BP.gif"},
+                    {ad:"Assisted Pull-up Machine",set:"3 Set x 10 Tekrar",set_sayisi:3,gif_url:
+                    "https://newlife.com.cy/wp-content/uploads/2019/11/00151301-Assisted-Parallel-Close-Grip-Pull-up_Back_360.gif"},
+                    {ad:"Lateral Raise",set:"4 Set x 15 Tekrar (Hafif ağırlık)",set_sayisi:4,gif_url:
+                    "https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif"},
+                    {ad:"Butterfly / Pec Deck",set:"3 Set x 15 Tekrar",set_sayisi:3,gif_url:
+                    "https://fitnessprogramer.com/wp-content/uploads/2021/02/Pec-Deck-Fly.gif"},
+                    {ad:"Hammer Curl",set:"3 Set x 12 Tekrar",set_sayisi:3,gif_url:
+                    "https://burnfit.io/wp-content/uploads/2023/11/CABLE_HAM_CURL.gif"},
+                    {ad:"Spor Sonrası Kardiyo",set:"Eliptik/Yatay Bisiklet: 15-20 dk.",set_sayisi:1,gif_url:
+                    "https://burnfit.io/wp-content/uploads/2023/11/ELLIP_MC.gif"}]},
+                {gun:"Cuma",baslik:"Alt Vücut & Karın (Tekrar & Denge)",hareketler:[{ad:"Lunges",set:"3 Set x 10 Adım (Her bacak)",set_sayisi:3,gif_url:
+                "https://fitnessprogramer.com/wp-content/uploads/2023/09/dumbbell-lunges.gif"},
+                {ad:"Calf Raise",set:"4 Set x 20 Tekrar",set_sayisi:4,gif_url:
+                "https://burnfit.io/wp-content/uploads/2023/11/BW_CALF_RAISE.gif"},
+                {ad:"Leg Press (Geniş Ayak)",set:"3 Set x 12 Tekrar",set_sayisi:3,gif_url:
+                "https://burnfit.io/wp-content/uploads/2023/11/SL_LEG_PRESS.gif"},
+                {ad:"Crunch Machine / Mekik",set:"4 Set x 20 Tekrar",set_sayisi:4,gif_url:
+                "https://burnfit.io/wp-content/uploads/2023/11/CRUNCH.gif"},
+                {ad:"Spor Sonrası Kardiyo",set:"Eliptik/Yatay Bisiklet: 15-20 dk.",set_sayisi:1,gif_url:
+                "https://burnfit.io/wp-content/uploads/2023/11/ELLIP_MC.gif"}]},
+                    {gun:"Cumartesi",baslik:"Aktif Kardiyo (Toparlanma)",not:"Açık hava yürüyüş, yüzme veya bisiklet 45-60 dk."},
+                    {gun:"Pazar",baslik:"Tam Dinlenme",not:"Kas Büyüme Günü – Kafein/Kardiyo Yok"}
             ];
 
             return {
