@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uğur İnan | Gym Tracker</title>
+    <meta name="theme-color" content="#0F172A">
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #a78bfa; --primary-dark: #7c3aed; --success: #34d399; --bg: #0f0f17; --card: #1a1a2e; }
+        body { background: linear-gradient(135deg, #0f0f17 0%, #0a0a10 100%); color: #f1f5f9; font-family: 'Inter', sans-serif; min-height: 100dvh; }
+        .font-display { font-family: 'Bebas Neue', sans-serif; }
+        .glass { background: rgba(26,26,46,0.7); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(167,139,250,0.25); }
+        .gradient-text { background: linear-gradient(90deg, #a78bfa, #c4b5fd); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .completed-set { background: var(--success); color: #000; box-shadow: 0 0 20px rgba(52,211,153,0.6); animation: pulse 0.5s; }
+        @keyframes pulse { 0%{transform:scale(0.9)} 50%{transform:scale(1.2)} 100%{transform:scale(1)} }
+        .gif-container { position: relative; width: 100%; padding-top: 100%; border-radius: 1rem; overflow: hidden; background: #111; }
+        .gif-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+        .set-btn { width: 56px; height: 56px; border-radius: 50%; background: rgba(55,65,81,0.7); border: 2px solid rgba(167,139,250,0.3); transition: all 0.25s; }
+        .set-btn:hover { background: rgba(167,139,250,0.25); border-color: var(--primary); transform: translateY(-4px); }
+    </style>
+</head>
+<body class="antialiased" x-data="gymApp()">
+
+    <!-- Header -->
+    <header class="px-5 pt-6 pb-4">
+        <div class="text-center mb-6">
+            <h1 class="text-4xl font-display text-white tracking-wider">UĞUR İNAN</h1>
+            <p class="text-sm gradient-text font-bold tracking-widest">GYM TRACKER PRO</p>
+        </div>
+        <div class="glass rounded-3xl p-6 shadow-2xl border border-violet-700/40">
+            <div class="flex items-center justify-between">
+                <button @click="changeDay(-1)" class="p-4 rounded-full bg-violet-600/40 hover:bg-violet-600/70 transition">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <div class="text-center">
+                    <div class="text-3xl font-display text-violet-300" x-text="currentDayName"></div>
+                    <div class="text-sm text-gray-400" x-text="formatDate(currentDate)"></div>
+                </div>
+                <button @click="changeDay(1)" class="p-4 rounded-full bg-violet-600/40 hover:bg-violet-600/70 transition">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main class="px-5 pb-32 max-w-lg mx-auto">
+        <!-- İçerik aynı kalıyor -->
+        <template x-if="currentProgram?.hareketler">
+            <div class="space-y-7">
+                <h2 class="text-4xl font-display gradient-text tracking-tight text-center" x-text="currentProgram.baslik"></h2>
+                <template x-if="currentProgram.not">
+                    <div class="glass p-5 rounded-2xl text-violet-200 text-center font-medium text-sm" x-text="currentProgram.not"></div>
+                </template>
+                <template x-for="(h,i) in currentProgram.hareketler">
+                    <div class="glass rounded-3xl overflow-hidden shadow-2xl border border-violet-800/50">
+                        <div class="p-6 pb-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <div class="text-2xl font-display text-white" x-text="(i+1)+'. '+h.ad"></div>
+                                    <div class="text-sm text-gray-400 mt-1" x-text="h.set"></div>
+                                </div>
+                                <div class="text-3xl font-display text-violet-400">
+                                    <span x-text="completedCount(h.ad)"></span>/<span x-text="h.set_sayisi"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gif-container">
+                            <img :src="h.gif_url || 'https://via.placeholder.com/400/1a1a2e/ffffff?text=GIF+YOK'" :alt="h.ad">
+                        </div>
+                        <div class="p-6 bg-gradient-to-t from-black/50 to-transparent">
+                            <div class="flex flex-wrap justify-center gap-5">
+                                <template x-for="n in h.set_sayisi">
+                                    <button @click="toggleSet(currentDate, h.ad, n)"
+                                        :class="isCompleted(currentDate, h.ad, n) ? 'completed-set font-bold text-black' : 'set-btn text-gray-300'"
+                                        class="set-btn flex items-center justify-center text-xl font-bold shadow-xl">
+                                        <template x-if="isCompleted(currentDate, h.ad, n)">
+                                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"/></svg>
+                                        </template>
+                                        <template x-if="!isCompleted(currentDate, h.ad, n)">
+                                            <span x-text="n"></span>
+                                        </template>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <template x-if="!currentProgram?.hareketler">
+            <div class="h-screen flex flex-col items-center justify-center text-center px-8">
+                <div class="p-12 rounded-full bg-gradient-to-br from-violet-900/50 to-violet-700/30 mb-8">
+                    <svg class="w-32 h-32 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                </div>
+                <h2 class="text-6xl font-display text-white mb-4" x-text="currentDayName"></h2>
+                <p class="text-2xl text-gray-400 max-w-md" x-text="currentProgram?.not || 'Tam dinlenme günü. Vücudun bugün büyüyor.'"></p>
+            </div>
+        </template>
+    </main>
+
+    <!-- Premium Footer -->
+    <footer class="fixed bottom-0 left-0 right-0 z-50 glass border-t border-violet-800/40">
+        <div class="px-6 py-4">
+            <div class="flex items-center justify-around text-violet-300">
+                <div class="text-center">
+                    <div class="text-2xl font-display" x-text="totalCompletedToday()"></div>
+                    <div class="text-xs opacity-70">Tamamlanan Set</div>
+                </div>
+                <div class="w-px h-12 bg-violet-700/40"></div>
+                <div class="text-center">
+                    <div class="text-2xl font-display" x-text="totalSetsToday()"></div>
+                    <div class="text-xs opacity-70">Toplam Set</div>
+                </div>
+                <div class="w-px h-12 bg-violet-700/40"></div>
+                <div class="text-center">
+                    <div class="text-2xl font-display text-emerald-400" x-text="Math.round((totalCompletedToday()/Math.max(totalSetsToday(),1))*100)+'%'"></div>
+                    <div class="text-xs opacity-70">İlerleme</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function gymApp() {
+            const programData = [ /* tüm program aynı, önceki mesajdaki gibi */ 
+                {gun:"Pazartesi",baslik:"Üst Vücut (İtme/Çekme)",hareketler:[{ad:"Chest Press Machine",set:"3 Set x 10-12 Tekrar (Oturarak, kolları ileri it)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Chest-Press-Machine.gif"},{ad:"Lat Pulldown",set:"3 Set x 10-15 Tekrar (Geniş tutuş, göğüse çek)",set_sayisi:3,gif_url:"https://sporium.net/wp-content/uploads/2020/01/pulldown-min.gif"},{ad:"Dumbbell Shoulder Press",set:"3 Set x 12 Tekrar (Omuzdan baş üstüne itiş)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2023/09/Standing-Dumbbell-Overhead-Press.gif"},{ad:"Seated Cable Row",set:"3 Set x 12-15 Tekrar (Yere yakın, karna çekiş)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Seated-Cable-Row.gif"},{ad:"Dumbbell Bicep Curl",set:"3 Set x 12-15 Tekrar (Ayakta, dambıl kaldırma)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Curl.gif"},{ad:"Triceps Pushdown",set:"3 Set x 12-15 Tekrar (Kabloyu arka kol ile it)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Pushdown.gif"},{ad:"Spor Sonrası Kardiyo",set:"Eliptik/Yatay Bisiklet: 15-20 dk.",set_sayisi:1,gif_url:"https://liftmanual.com/wp-content/uploads/2023/04/cycle-cross-trainer.gif"}]},
+                {gun:"Salı",baslik:"Alt Vücut & Karın (Aktif Toparlanma)",hareketler:[{ad:"Leg Press",set:"3 Set x 10-12 Tekrar",set_sayisi:3,gif_url:"https://media.tenor.com/e0qeS17dv7QAAAAM/legpress45-leg-press.gif"},{ad:"Leg Extension",set:"3 Set x 15 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/LEG-EXTENSION.gif"},{ad:"Lying Leg Curl",set:"3 Set x 12 Tekrar",set_sayisi:3,gif_url:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjHK1HxRH5eV1_5SJ4irnZjc7kbnf2SZTNzw&s"},{ad:"Gobblet Squat",set:"3 Set x 12 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Goblet-Squat.gif"},{ad:"Plank",set:"3 Set x (Maksimum Süre / Hedef 45-60 sn)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Plank.gif"},{ad:"Spor Sonrası Kardiyo",set:"Eliptik/Yatay Bisiklet: 15-20 dk.",set_sayisi:1,gif_url:""}]},
+                {gun:"Çarşamba",baslik:"Dinlenme",not:"Tam Dinlenme veya Hafif Yürüyüş"},
+                {gun:"Perşembe",baslik:"Üst Vücut (Farklı Açılar)",hareketler:[{ad:"Incline Dumbbell Press",set:"3 Set x 10-12 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Bench-Press.gif"},{ad:"Assisted Pull-up Machine",set:"3 Set x 10 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Assisted-Pull-Up.gif"},{ad:"Lateral Raise",set:"4 Set x 15 Tekrar (Hafif ağırlık)",set_sayisi:4,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lateral-Raise.gif"},{ad:"Butterfly / Pec Deck",set:"3 Set x 15 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Pec-Deck-Fly.gif"},{ad:"Hammer Curl",set:"3 Set x 12 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Hammer-Curl.gif"},{ad:"Spor Sonrası Kardiyo",set:"Eliptik/Yatay Bisiklet: 15-20 dk.",set_sayisi:1,gif_url:""}]},
+                {gun:"Cuma",baslik:"Alt Vücut & Karın (Tekrar & Denge)",hareketler:[{ad:"Lunges",set:"3 Set x 10 Adım (Her bacak)",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Lunge.gif"},{ad:"Calf Raise",set:"4 Set x 20 Tekrar",set_sayisi:4,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Standing-Dumbbell-Calf-Raise.gif"},{ad:"Leg Press (Geniş Ayak)",set:"3 Set x 12 Tekrar",set_sayisi:3,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Leg-Press.gif"},{ad:"Crunch Machine / Mekik",set:"4 Set x 20 Tekrar",set_sayisi:4,gif_url:"https://fitnessprogramer.com/wp-content/uploads/2021/02/Crunches-on-Machine.gif"},{ad:"Spor Sonrası Kardiyo",set:"Eliptik/Yatay Bisiklet: 15-20 dk.",set_sayisi:1,gif_url:""}]},
+                {gun:"Cumartesi",baslik:"Aktif Kardiyo (Toparlanma)",not:"Açık hava yürüyüş, yüzme veya bisiklet 45-60 dk."},
+                {gun:"Pazar",baslik:"Tam Dinlenme",not:"Kas Büyüme Günü – Kafein/Kardiyo Yok"}
+            ];
+
+            return {
+                program: programData,
+                currentDate: new Date(),
+                completedSets: JSON.parse(localStorage.getItem('gymSets') || '{}'),
+
+                get currentDayIndex() { return this.currentDate.getDay() === 0 ? 6 : this.currentDate.getDay() - 1; },
+                get currentProgram() { return this.program[this.currentDayIndex]; },
+                get currentDayName() { return this.program[this.currentDayIndex].gun; },
+
+                formatDate(d) { return d.toLocaleDateString('tr-TR', {weekday:'long', day:'numeric', month:'long'}); },
+                changeDay(n) { this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() + n)); },
+
+                key(d,m,s) { return `${d.toISOString().split('T')[0]}_${m.replace(/\s/g,'')}_S${s}`; },
+                isCompleted(d,m,s) { return !!this.completedSets[this.key(d,m,s)]; },
+                toggleSet(d,m,s) {
+                    const k = this.key(d,m,s);
+                    const copy = {...this.completedSets};
+                    copy[k] ? delete copy[k] : copy[k] = true;
+                    this.completedSets = copy;
+                    localStorage.setItem('gymSets', JSON.stringify(copy));
+                },
+                completedCount(m) {
+                    let c = 0;
+                    const name = m.replace(/\s/g,'');
+                    for (let k in this.completedSets) if (k.includes(name)) c++;
+                    return c;
+                },
+                totalCompletedToday() {
+                    const today = this.currentDate.toISOString().split('T')[0];
+                    let count = 0;
+                    for (let k in this.completedSets) if (k.startsWith(today)) count++;
+                    return count;
+                },
+                totalSetsToday() {
+                    const prog = this.currentProgram?.hareketler;
+                    if (!prog) return 0;
+                    return prog.reduce((a,h) => a + h.set_sayisi, 0);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
