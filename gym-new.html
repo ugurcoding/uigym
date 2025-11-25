@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>UĞUR İNAN - Gym Tracker Pro</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-dark: #020617;
+            --card-bg: rgba(30, 41, 59, 0.4);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.3) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.25) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.3) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(6, 182, 212, 0.25) 0px, transparent 50%);
+            background-size: 200% 200%;
+            animation: mesh-gradient 20s ease infinite;
+            color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            min-height: 100dvh;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            touch-action: pan-y;
+        }
+
+        @keyframes mesh-gradient {
+
+            0%,
+            100% {
+                background-position: 0% 0%;
+            }
+
+            50% {
+                background-position: 100% 100%;
+            }
+        }
+
+        .font-display {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 0.05em;
+        }
+
+        .glass {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+        }
+
+        .glass-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media (hover: hover) {
+            .glass-hover:hover {
+                background: rgba(30, 41, 59, 0.6);
+                border-color: rgba(139, 92, 246, 0.4);
+                transform: translateY(-4px);
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1), 0 0 30px rgba(139, 92, 246, 0.3);
+            }
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #c4b5fd 0%, #67e8f9 50%, #c4b5fd 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shine 8s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .completed-set {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #020617;
+            border-color: #10b981;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.6), 0 0 10px rgba(16, 185, 129, 0.4);
+            animation: success-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes success-pop {
+            0% {
+                transform: scale(0.8) rotate(-5deg);
+            }
+
+            50% {
+                transform: scale(1.15) rotate(5deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .gif-container {
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.7), 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .gif-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s;
+            opacity: 0.95;
+        }
+
+        @media (hover: hover) {
+            .gif-container:hover img {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+        }
+
+        .bottom-6 {
+            bottom: 0.5rem !important;
+        }
+
+        .set-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .set-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        @media (hover: hover) {
+            .set-btn:hover {
+                background: rgba(139, 92, 246, 0.25);
+                border-color: rgba(139, 92, 246, 0.6);
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+            }
+
+            .set-btn:hover::before {
+                opacity: 1;
+            }
+        }
+
+        .set-btn:active {
+            transform: scale(0.92);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-glow {
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(6, 182, 212, 0.3);
+        }
+
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(0px, env(safe-area-inset-left));
+                padding-right: max(0px, env(safe-area-inset-right));
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(139, 92, 246, 0.4);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 92, 246, 0.6);
+        }
+    </style>
+</head>
+
+<body class="antialiased" x-data="gymApp()">
+
+    <!-- Header -->
+    <header class="px-6 pt-8 pb-6 max-w-lg mx-auto">
+        <div class="flex flex-col items-center mb-8">
+            <div class="text-center">
+                <h1 class="text-4xl font-display text-white tracking-wider leading-none">UĞUR İNAN</h1>
+                <div class="flex items-center gap-2 mt-1 justify-center">
+                    <div class="h-1 w-8 bg-gradient-to-r from-violet-500 to-cyan-400 rounded-full"></div>
+                    <p class="text-xs font-bold tracking-[0.2em] text-gray-400 uppercase">Gym Tracker Pro</p>
+                </div>
+            </div>
+        </div>
+
+        <!--  <div class="w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 to-cyan-400 p-[1px]">
+                <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center">
+                    <span class="text-xl">🏋🏻‍♂️</span> 
+                </div>
+            </div> -->
+        </div>
+
+        <div class="glass rounded-2xl p-1 relative overflow-hidden group">
+            <div
+                class="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-cyan-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            </div>
+            <div class="relative flex items-center justify-between p-4">
+                <button @click="changeDay(-1)"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 transition-all active:scale-95">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <div class="text-center">
+                    <div class="text-3xl font-display text-white tracking-wide" x-text="currentDayName"></div>
+                    <div class="text-xs font-medium text-cyan-400 tracking-wider uppercase mt-1"
+                        x-text="formatDate(currentDate)"></div>
+                </div>
+                <button @click="changeDay(1)"
+                    class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 transition-all active:scale-95">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Timer Modal -->
+    <div x-show="timerActive" x-transition class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+        style="display: none;">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" @click="stopTimer()"></div>
+        <div class="relative glass rounded-3xl p-8 max-w-sm w-full border-2 border-violet-500/30 shadow-2xl">
+            <div class="text-center">
+                <div class="text-sm text-gray-400 uppercase tracking-wider mb-2"
+                    x-text="timerType === 'set' ? 'Set Arası Dinlenme' : 'Yeni Harekete Geçiş'"></div>
+                <div class="text-7xl font-display text-white mb-4" x-text="formatTime(timerSeconds)"></div>
+                <div class="h-2 bg-gray-800 rounded-full overflow-hidden mb-6">
+                    <div class="h-full bg-gradient-to-r from-violet-500 to-cyan-400 transition-all duration-1000"
+                        :style="`width: ${(timerSeconds / (timerType === 'set' ? 60 : 120)) * 100}%`"></div>
+                </div>
+                <button @click="stopTimer()"
+                    class="w-full py-3 rounded-xl bg-red-500/20 border border-red-500/50 text-red-400 font-semibold hover:bg-red-500/30 transition-all">
+                    Durdur
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <main class="px-5 pb-32 max-w-lg mx-auto" x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 transform translate-y-4"
+        x-transition:enter-end="opacity-100 transform translate-y-0">
+
+        <template x-if="currentProgram?.hareketler">
+            <div class="space-y-8">
+                <div class="text-center space-y-3">
+                    <h2 class="text-5xl font-display gradient-text tracking-tight" x-text="currentProgram.baslik"></h2>
+                    <template x-if="currentProgram.not">
+                        <div class="inline-block glass px-6 py-2 rounded-full text-violet-200 font-medium text-sm border border-violet-500/20"
+                            x-text="currentProgram.not"></div>
+                    </template>
+
+                    <!-- Isınma ve Dinlenme Bilgileri -->
+
+
+                    <template x-for="(h,i) in currentProgram.hareketler">
+                        <div class="glass glass-hover rounded-3xl overflow-hidden transition-all duration-300 group">
+                            <div class="p-6 pb-4 relative">
+                                <div
+                                    class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                    <span class="text-6xl font-display text-white" x-text="i+1"></span>
+                                </div>
+
+                                <div class="relative z-10">
+                                    <div class="flex justify-between items-start mb-4">
+                                        <div class="pr-8">
+                                            <h3 class="text-2xl font-display text-white tracking-wide mb-1"
+                                                x-text="h.ad">
+                                            </h3>
+                                            <p class="text-sm text-gray-400 font-medium leading-relaxed" x-text="h.set">
+                                            </p>
+                                            <!-- Tempo Bilgisi -->
+                                            <p class="text-xs text-cyan-400 mt-2 font-semibold">⚡ Tempo: Kaldırış 1sn |
+                                                İndiriş 3sn</p>
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="flex items-center justify-between mb-4 bg-black/20 rounded-xl p-3 border border-white/5">
+                                        <span
+                                            class="text-xs font-bold text-gray-400 uppercase tracking-wider">İlerleme</span>
+                                        <div class="flex items-baseline gap-1">
+                                            <span class="text-2xl font-display text-cyan-400"
+                                                x-text="completedCount(h.ad)"></span>
+                                            <span class="text-sm text-gray-500 font-bold">/</span>
+                                            <span class="text-lg font-display text-gray-400"
+                                                x-text="h.set_sayisi"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="px-6 pb-6">
+                                <div class="gif-container mb-6 group-hover:shadow-2xl transition-shadow duration-500">
+                                    <video :src="h.gif_url" :alt="h.ad" autoplay loop muted playsinline preload="auto"
+                                        class="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-700 opacity-95 group-hover:transform-none group-hover:opacity-100"
+                                        x-show="h.gif_url.endsWith('.mp4') || h.gif_url.endsWith('.MP4')">
+                                    </video>
+
+                                    <img :src="h.gif_url || 'https://via.placeholder.com/400/1a1a2e/ffffff?text=G%C3%8F+YOK'"
+                                        :alt="h.ad" loading="lazy"
+                                        x-show="!h.gif_url.endsWith('.mp4') && !h.gif_url.endsWith('.MP4')"
+                                        class="absolute top-0 left-0 w-full h-full object-cover transition-transform duration-700 opacity-95 group-hover:scale-108 group-hover:opacity-100">
+
+                                    <div
+                                        class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none">
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap justify-center gap-4">
+                                    <template x-for="n in h.set_sayisi">
+                                        <button @click="toggleSet(currentDate, h.ad, n, i, h.set_sayisi)"
+                                            :class="isCompleted(currentDate, h.ad, n) ? 'completed-set' : 'set-btn'"
+                                            class="flex items-center justify-center text-lg font-bold shadow-lg relative group/btn">
+                                            <span class="relative z-10" x-show="!isCompleted(currentDate, h.ad, n)"
+                                                x-text="n"></span>
+                                            <svg x-show="isCompleted(currentDate, h.ad, n)"
+                                                class="w-6 h-6 relative z-10" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                    d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+        </template>
+
+        <template x-if="!currentProgram?.hareketler">
+            <div class="h-[60vh] flex flex-col items-center justify-center text-center px-6">
+                <div class="relative mb-8 group">
+                    <div
+                        class="absolute inset-0 bg-violet-500/20 blur-3xl rounded-full group-hover:bg-violet-500/30 transition-all duration-500">
+                    </div>
+                    <div
+                        class="relative p-8 rounded-full bg-gradient-to-br from-violet-500/10 to-cyan-400/10 border border-white/10 backdrop-blur-xl">
+                        <svg class="w-24 h-24 text-violet-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    </div>
+                </div>
+                <h2 class="text-5xl font-display text-white mb-4 tracking-wide" x-text="currentDayName"></h2>
+                <div class="glass px-8 py-6 rounded-2xl border border-white/5">
+                    <p class="text-xl text-gray-300 font-light leading-relaxed"
+                        x-text="currentProgram?.not || 'Tam dinlenme günü. Vücudun bugün büyüyor.'"></p>
+                </div>
+            </div>
+        </template>
+    </main>
+
+    <!-- Premium Footer -->
+    <footer class="fixed bottom-6 left-5 right-5 z-50">
+        <div class="glass rounded-2xl p-4 border border-white/10 shadow-2xl relative overflow-hidden max-w-lg mx-auto">
+            <div class="absolute bottom-0 left-0 h-1 bg-gray-800 w-full"></div>
+            <div class="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-violet-500 to-cyan-400 transition-all duration-1000 progress-glow"
+                :style="`width: ${(totalCompletedToday()/Math.max(totalSetsToday(),1))*100}%`"></div>
+
+            <div class="flex items-center justify-between px-2 relative z-10">
+                <div class="flex flex-col items-center w-1/3">
+                    <span class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Tamamlanan SET</span>
+                    <span class="text-2xl font-display text-white" x-text="totalCompletedToday()"></span>
+                </div>
+
+                <div class="w-px h-8 bg-white/10"></div>
+
+                <div class="flex flex-col items-center w-1/3">
+                    <span class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Hedef SET</span>
+                    <span class="text-2xl font-display text-gray-300" x-text="totalSetsToday()"></span>
+                </div>
+
+                <div class="w-px h-8 bg-white/10"></div>
+
+                <div class="flex flex-col items-center w-1/3">
+                    <span class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Durum</span>
+                    <span class="text-2xl font-display text-cyan-400"
+                        x-text="Math.round((totalCompletedToday()/Math.max(totalSetsToday(),1))*100)+'%'"></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function gymApp() {
+            const programData = [
+                {
+                    gun: "Pazartesi", baslik: "Üst Vücut (İtme/Çekme)", hareketler: [
+                        { ad: "Chest Press Machine", set: "3 Set x 10-12 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/21951201-Lever-Chest-Press-VERSION-3-Chest+.mp4" },
+                        { ad: "Lat Pulldown", set: "3 Set x 10-15 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/01501201-Cable-Bar-Lateral-Pulldown-Back.mp4" },
+                        { ad: "Dumbbell Shoulder Press", set: "3 Set x 12 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/04051201-Dumbbell-Seated-Shoulder-Press-Shoulders.mp4" },
+                        { ad: "Seated Cable Row", set: "3 Set x 12-15 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/01801201-Cable-Low-Seated-Row-Back.mp4" },
+                        { ad: "Dumbbell Bicep Curl", set: "3 Set x 12-15 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/04161201-Dumbbell-Standing-Biceps-Curl-Upper-Arms.mp4" },
+                        { ad: "Triceps Pushdown", set: "3 Set x 12-15 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/02411201-Cable-Triceps-Pushdown-V-bar-attachment-Upper-Arms.mp4" },
+                        { ad: "Spor Sonrası Kardiyo", set: "Eliptik/Yatay Bisiklet: 15-20 dk.", set_sayisi: 1, gif_url: "https://app.fitnessai.com/exercises/21411201-Walk-Elliptical-Cross-Trainer-Cardio.mp4" }
+                    ]
+                },
+                {
+                    gun: "Salı", baslik: "Alt Vücut & Karın", hareketler: [
+                        { ad: "Leg Press", set: "3 Set x 10-12 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/13911201-Sled-Calf-Press-On-Leg-Press-Calves.mp4" },
+                        { ad: "Leg Extension", set: "3 Set x 15 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/05991201-Lever-Seated-Leg-Curl-Thighs.mp4" },
+                        { ad: "Lying Leg Curl", set: "3 Set x 12 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/05861201-Lever-Lying-Leg-Curl-Thighs.mp4" },
+                        { ad: "Gobblet Squat", set: "3 Set x 12 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/22811201-Dumbbell-Goblet-Squat-female-Thighs.mp4" },
+                        { ad: "Plank", set: "3 Set x 45-60 sn", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/04631201-Front-Plank-m-waist.mp4" },
+                        { ad: "Spor Sonrası Kardiyo", set: "Eliptik: 15-20 dk.", set_sayisi: 1, gif_url: "https://app.fitnessai.com/exercises/21411201-Walk-Elliptical-Cross-Trainer-Cardio.mp4" }
+                    ]
+                },
+                { gun: "Çarşamba", baslik: "Dinlenme", not: "Tam Dinlenme veya Hafif Yürüyüş" },
+                {
+                    gun: "Perşembe", baslik: "Üst Vücut (Farklı Açılar)", hareketler: [
+                        { ad: "Incline Dumbbell Press", set: "3 Set x 10-12 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/03141201-Dumbbell-Incline-Bench-Press-Chest.mp4" },
+                        { ad: "Assisted Pull-up Machine", set: "3 Set x 10 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/00171201-Assisted-Pull-up-Back.mp4" },
+                        { ad: "Lateral Raise", set: "4 Set x 15 Tekrar", set_sayisi: 4, gif_url: "https://app.fitnessai.com/exercises/03341201-Dumbbell-Lateral-Raise-shoulder.mp4" },
+                        { ad: "Butterfly / Pec Deck", set: "3 Set x 15 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/05961201-Lever-Seated-Fly-Chest.mp4" },
+                        { ad: "Hammer Curl", set: "3 Set x 12 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/03121201-Dumbbell-Hammer-Curl-version-2-Upper-Arms.mp4" },
+                        { ad: "Spor Sonrası Kardiyo", set: "Eliptik: 15-20 dk.", set_sayisi: 1, gif_url: "https://app.fitnessai.com/exercises/21411201-Walk-Elliptical-Cross-Trainer-Cardio.mp4" }
+                    ]
+                },
+                {
+                    gun: "Cuma", baslik: "Alt Vücut & Karın", hareketler: [
+                        { ad: "Lunges", set: "3 Set x 10 Adım", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/03811201-Dumbbell-Rear-Lunge-Thighs.mp4" },
+                        { ad: "Calf Raise", set: "4 Set x 20 Tekrar", set_sayisi: 4, gif_url: "https://app.fitnessai.com/exercises/04171201-Dumbbell-Standing-Calf-Raise-Calf.mp4" },
+                        { ad: "Leg Press (Geniş Ayak)", set: "3 Set x 12 Tekrar", set_sayisi: 3, gif_url: "https://app.fitnessai.com/exercises/13911201-Sled-Calf-Press-On-Leg-Press-Calves.mp4" },
+                        { ad: "Crunch Machine", set: "4 Set x 20 Tekrar", set_sayisi: 4, gif_url: "https://app.fitnessai.com/exercises/02771201-Decline-Crunch-waist.mp4" },
+                        { ad: "Spor Sonrası Kardiyo", set: "Eliptik: 15-20 dk.", set_sayisi: 1, gif_url: "https://app.fitnessai.com/exercises/21411201-Walk-Elliptical-Cross-Trainer-Cardio.mp4" }
+                    ]
+                },
+                { gun: "Cumartesi", baslik: "Aktif Kardiyo", not: "Açık hava yürüyüş, yüzme veya bisiklet 45-60 dk." },
+                { gun: "Pazar", baslik: "Tam Dinlenme", not: "Kas Büyüme Günü – Kafein/Kardiyo Yok" }
+            ];
+
+            return {
+                program: programData,
+                currentDate: new Date(),
+                completedSets: JSON.parse(localStorage.getItem('gymSets') || '{}'),
+                timerActive: false,
+                timerSeconds: 60,
+                timerType: 'set',
+                timerInterval: null,
+
+                get currentDayIndex() { return this.currentDate.getDay() === 0 ? 6 : this.currentDate.getDay() - 1; },
+                get currentProgram() { return this.program[this.currentDayIndex]; },
+                get currentDayName() { return this.program[this.currentDayIndex].gun; },
+
+                formatDate(d) { return d.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long' }); },
+                changeDay(n) { this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() + n)); },
+
+                key(d, m, s) { return `${d.toISOString().split('T')[0]}_${m.replace(/\s/g, '')}_S${s}`; },
+                isCompleted(d, m, s) { return !!this.completedSets[this.key(d, m, s)]; },
+
+                formatTime(seconds) {
+                    const mins = Math.floor(seconds / 60);
+                    const secs = seconds % 60;
+                    return `${mins}:${secs.toString().padStart(2, '0')}`;
+                },
+
+                startTimer(type) {
+                    this.timerType = type;
+                    this.timerSeconds = type === 'set' ? 60 : 120;
+                    this.timerActive = true;
+
+                    this.timerInterval = setInterval(() => {
+                        this.timerSeconds--;
+                        if (this.timerSeconds <= 0) {
+                            this.stopTimer();
+                            if (typeof confetti !== 'undefined') {
+                                confetti({
+                                    particleCount: 50,
+                                    spread: 60,
+                                    origin: { y: 0.6 },
+                                    colors: ['#a78bfa', '#22d3ee']
+                                });
+                            }
+                        }
+                    }, 1000);
+                },
+
+                stopTimer() {
+                    this.timerActive = false;
+                    if (this.timerInterval) {
+                        clearInterval(this.timerInterval);
+                        this.timerInterval = null;
+                    }
+                },
+
+                toggleSet(d, m, s, exerciseIndex, totalSets) {
+                    const k = this.key(d, m, s);
+                    const copy = { ...this.completedSets };
+                    const wasCompleted = copy[k];
+
+                    if (wasCompleted) {
+                        delete copy[k];
+                    } else {
+                        copy[k] = true;
+                        this.triggerConfetti('small');
+
+                        setTimeout(() => {
+                            const exercise = this.currentProgram.hareketler.find(h => h.ad === m);
+                            const completedInExercise = this.completedCount(m);
+
+                            if (exercise && completedInExercise === exercise.set_sayisi) {
+                                this.triggerConfetti('medium');
+                                if (exerciseIndex < this.currentProgram.hareketler.length - 1) {
+                                    setTimeout(() => this.startTimer('exercise'), 500);
+                                }
+                            } else {
+                                setTimeout(() => this.startTimer('set'), 500);
+                            }
+
+                            if (this.totalCompletedToday() === this.totalSetsToday()) {
+                                setTimeout(() => this.triggerConfetti('large'), 300);
+                            }
+                        }, 100);
+                    }
+
+                    this.completedSets = copy;
+                    localStorage.setItem('gymSets', JSON.stringify(copy));
+                },
+
+                triggerConfetti(type) {
+                    if (typeof confetti === 'undefined') return;
+
+                    if (type === 'small') {
+                        confetti({
+                            particleCount: 30,
+                            spread: 50,
+                            origin: { y: 0.7 },
+                            colors: ['#a78bfa', '#22d3ee', '#34d399'],
+                            disableForReducedMotion: true,
+                            scalar: 0.8
+                        });
+                    } else if (type === 'medium') {
+                        confetti({
+                            particleCount: 100,
+                            spread: 80,
+                            origin: { y: 0.6 },
+                            colors: ['#ffffff', '#a78bfa', '#22d3ee'],
+                            disableForReducedMotion: true,
+                            startVelocity: 35
+                        });
+                    } else if (type === 'large') {
+                        const duration = 3000;
+                        const animationEnd = Date.now() + duration;
+                        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+                        const interval = setInterval(() => {
+                            const timeLeft = animationEnd - Date.now();
+
+                            if (timeLeft <= 0) {
+                                return clearInterval(interval);
+                            }
+
+                            const particleCount = 50 * (timeLeft / duration);
+                            confetti({
+                                ...defaults,
+                                particleCount,
+                                origin: { x: Math.random() * 0.3 + 0.1, y: Math.random() * 0.3 },
+                                colors: ['#a78bfa', '#22d3ee', '#34d399', '#ffffff']
+                            });
+                            confetti({
+                                ...defaults,
+                                particleCount,
+                                origin: { x: Math.random() * 0.3 + 0.6, y: Math.random() * 0.3 },
+                                colors: ['#a78bfa', '#22d3ee', '#34d399', '#ffffff']
+                            });
+                        }, 250);
+                    }
+                },
+
+                completedCount(m) {
+                    let c = 0;
+                    const name = m.replace(/\s/g, '');
+                    for (let k in this.completedSets) if (k.includes(name)) c++;
+                    return c;
+                },
+
+                totalCompletedToday() {
+                    const today = this.currentDate.toISOString().split('T')[0];
+                    let count = 0;
+                    for (let k in this.completedSets) if (k.startsWith(today)) count++;
+                    return count;
+                },
+
+                totalSetsToday() {
+                    const prog = this.currentProgram?.hareketler;
+                    if (!prog) return 0;
+                    return prog.reduce((a, h) => a + h.set_sayisi, 0);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
